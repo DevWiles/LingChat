@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>lingchat</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <!-- 所有子模块 -->
+    <modules>
+        <module>lingchat-common</module>
+        <module>lingchat-framework</module>
+        <module>lingchat-gateway</module>
+        <module>lingchat-auth-service</module>
+        <module>lingchat-user-service</module>
+        <module>lingchat-message-service</module>
+        <module>lingchat-group-service</module>
+        <module>lingchat-presence-service</module>
+        <module>lingchat-job</module>
+    </modules>
+
+    <!-- 统一版本 -->
+    <properties>
+        <java.version>17</java.version>
+        <spring.boot.version>3.2.5</spring.boot.version>
+        <mysql.version>8.3.0</mysql.version>
+    </properties>
+
+</project>
