@@ -83,12 +83,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 核心逻辑封装在这里：**密码加密、验证用户、生成Token**。
 
 #### 创建 `service/AuthService.java`
+
 ```java
 package org.lingchat.authservice.service;
 
 import org.lingchat.authservice.dto.UserLoginDTO;
 import org.lingchat.authservice.entity.User;
-import org.lingchat.authservice.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -110,12 +110,12 @@ public class AuthService {
         if (userRepository.findByUsername(dto.getUsername()).isPresent()) {
             throw new RuntimeException("用户名已被占用");
         }
-        
+
         // 2. 加密密码（千万不要存明文！）
         User user = new User();
         user.setUsername(dto.getUsername());
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
-        
+
         // 3. 保存到数据库
         return userRepository.save(user);
     }
@@ -127,12 +127,12 @@ public class AuthService {
         // 1. 找用户
         User user = userRepository.findByUsername(dto.getUsername())
                 .orElseThrow(() -> new RuntimeException("用户不存在"));
-        
+
         // 2. 验密码（matches是对比明文和加密串）
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             throw new RuntimeException("密码错误");
         }
-        
+
         return user;
     }
 }

@@ -77,6 +77,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Spring Security 安全框架（登录、注册、加密、权限） -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
