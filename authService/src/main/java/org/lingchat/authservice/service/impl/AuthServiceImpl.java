@@ -55,6 +55,13 @@ public class AuthServiceImpl implements AuthService {
         return convertToResponse(user);
     }
 
+    @Override
+    public UserResponse findByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("用户不存在"));
+        return convertToResponse(user);
+    }
+
     // 将 Entity 转化为 Response DTO
     private UserResponse convertToResponse(User user) {
         return UserResponse.builder()

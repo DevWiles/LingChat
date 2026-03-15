@@ -37,4 +37,18 @@ public class User {
     @Column(nullable = false) // 更新时间
     private LocalDateTime updateTime;
 
+    @PrePersist
+    public void prePersist() {
+        // 创建时间
+        this.createTime = LocalDateTime.now();
+        // 更新时间
+        this.updateTime = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        // 更新时间
+        this.updateTime = LocalDateTime.now();
+    }
+
 }
