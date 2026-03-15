@@ -1,6 +1,6 @@
 spring:
   application:
-    name: authService
+    name: lingchat-auth-service
 
   datasource:
     url: jdbc:mysql://localhost:3306/lingchat?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
@@ -13,10 +13,9 @@ spring:
       ddl-auto: update
     show-sql: true
     properties:
-        hibernate:
-          format_sql: true # 格式化sql语句
-          dialect: org.hibernate.dialect.MySQLDialect # 适配 MySQL 8+ 版本，向下兼容以前的版本
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
 
-  server:
-    port: 8080
-
+server:
+  port: 8081
