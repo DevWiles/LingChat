@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LingchatGatawayApplication {
+public class LingchatGatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(LingchatGatawayApplication.class, args);
+        SpringApplication.run(LingchatGatewayApplication.class, args);
     }
 
 }
