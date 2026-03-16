@@ -10,7 +10,7 @@ spring:
     redis:
       host: localhost
       port: 6379
-      password: # 需要配置自己的密码
+      password: # 测试0
       database: 0
       timeout: 5000ms
 
