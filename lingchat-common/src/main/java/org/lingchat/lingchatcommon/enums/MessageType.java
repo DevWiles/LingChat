@@ -12,11 +12,11 @@ public enum MessageType {
     VIDEO(5, "视频消息"),
     SYSTEM(99, "系统消息");
 
-    private final Integer code;
-    private final String message;
+    private final Integer type;
+    private final String description;
 
     MessageType(Integer type, String description) {
-        this.code = type;
-        this.message = description;
+        this.type = type;
+        this.description = description;
     }
 }

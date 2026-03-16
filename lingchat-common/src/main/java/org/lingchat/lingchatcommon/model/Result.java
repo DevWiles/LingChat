@@ -21,8 +21,13 @@ public class Result<T> {
     public static <T> Result<T> success(T data) {
         return Result.<T>builder()
                 .code(200)
+                .message("success")
                 .data(data)
                 .build();
+    }
+
+    public static <T> Result<T> success() {
+        return success(null);
     }
 
     // 一个统一返回结果的快捷构造方法，用于在接口失败时快速生成 Result 对象。

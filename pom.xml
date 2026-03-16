@@ -1,13 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.example</groupId>
+    <groupId>org.lingchat</groupId>
     <artifactId>lingchat</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>lingchat-auth-service</module>
+        <module>lingchat-common</module>
     </modules>
 
     <properties>

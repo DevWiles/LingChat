@@ -36,4 +36,39 @@ public class IdGenerator {
             machineId = ManagementFactory.getRuntimeMXBean().getName().hashCode() & 0x3FF;
         }
     }
+
+    public static synchronized long nextId() {
+        long timestamp = System.currentTimeMillis();
+
+        if (timestamp < lastTimestamp) {
+            throw new RuntimeException("Clock moved backwards");
+        }
+
+        if (lastTimestamp == timestamp) {
+            sequence = (sequence + 1) & SEQUENCE_MASK;
+            if (sequence == 0) {
+                timestamp = waitNextMillis(lastTimestamp);
+            }
+        } else {
+            sequence = 0L;
+        }
+
+        lastTimestamp = timestamp;
+
+        return ((timestamp - EPOCH) << TIMESTAMP_SHIFT)
+                | (machineId << MACHINE_SHIFT)
+                | sequence;
+    }
+
+    private static long waitNextMillis(long lastTimestamp) {
+        long timestamp = System.currentTimeMillis();
+        while (timestamp <= lastTimestamp) {
+            timestamp = System.currentTimeMillis();
+        }
+        return timestamp;
+    }
+
+    private IdGenerator() {
+        throw new IllegalStateException("Utility class");
+    }
 }

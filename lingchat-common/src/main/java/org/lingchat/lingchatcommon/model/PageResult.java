@@ -15,7 +15,7 @@ public class PageResult<T> {
 
     private List<T> list;
 
-    private long total;
+    private Long total;
 
     private Integer pageNum;
 
