@@ -67,8 +67,33 @@ public class GlobalErrorHandler implements ErrorWebExceptionHandler {
             return HttpStatus.NOT_FOUND;
         }
         
+        // ✅ 新增：限流异常 - 返回 429 Too Many Requests
+        if (isRateLimitException(ex)) {
+            return HttpStatus.TOO_MANY_REQUESTS;
+        }
+        
+        // ✅ 新增：认证授权相关异常
+        if (ex.getMessage() != null) {
+            String msg = ex.getMessage().toLowerCase();
+            if (msg.contains("未提供认证令牌") || msg.contains("未认证")) {
+                return HttpStatus.UNAUTHORIZED;
+            }
+            if (msg.contains("权限不足") || msg.contains("forbidden")) {
+                return HttpStatus.FORBIDDEN;
+            }
+        }
+        
         // 默认返回 500
         return HttpStatus.INTERNAL_SERVER_ERROR;
+    }
+
+    /**
+     * 判断是否是限流异常
+     */
+    private boolean isRateLimitException(Throwable ex) {
+        return ex.getClass().getName().contains("RequestRateLimiter") ||
+                ex.getClass().getName().contains("DataBufferLimitException") ||
+                (ex.getMessage() != null && ex.getMessage().contains("429"));
     }
 
     /**

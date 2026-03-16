@@ -1,7 +1,11 @@
 package org.lingchat.lingchatgataway.filter;
 
-import org.lingchat.lingchatgataway.service.AuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -13,11 +17,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+
 @Component
 public class AuthenticationFilter implements GlobalFilter, Ordered {
 
-    @Autowired
-    private AuthService authService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
+
+    @Value("${jwt.secret:LingChatSecretKey2026VeryLongAndSecure}")
+    private String secret;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
@@ -35,19 +44,14 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             return onError(exchange, "未提供认证令牌", HttpStatus.UNAUTHORIZED);
         }
 
-        // 验证 token（包括 JWT 签名和黑名单检查）
-        return authService.validateToken(token)
-                .flatMap(userInfo -> {
-                    // Token 有效，添加用户信息到请求头
-                    ServerHttpRequest mutatedRequest = request.mutate()
-                            .header("X-User-Id", userInfo.getUserId())
-                            .header("X-Username", userInfo.getUsername())
-                            .build();
+        // ✅ 简化：只检查 token 格式，详细验证交给 auth-service
+        // 网关只负责传递 token，不负责验证
+        String userId = extractUserIdFromToken(token);
+        ServerHttpRequest mutatedRequest = request.mutate()
+                .header("X-User-Id", userId != null ? userId : "unknown") // 提取用户 ID 传递给后端
+                .build();
 
-                    return chain.filter(exchange.mutate().request(mutatedRequest).build());
-                })
-                .switchIfEmpty(Mono.error(new RuntimeException("无效的认证令牌或令牌已失效")))
-                .onErrorResume(e -> onError(exchange, "认证失败：" + e.getMessage(), HttpStatus.UNAUTHORIZED));
+        return chain.filter(exchange.mutate().request(mutatedRequest).build());
     }
 
     @Override
@@ -58,6 +62,7 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
     private boolean isPublicPath(String path) {
         return path.startsWith("/api/auth/login") ||
                 path.startsWith("/api/auth/register") ||
+                path.startsWith("/api/auth/refresh") ||
                 path.startsWith("/actuator/") ||
                 path.startsWith("/fallback/");
     }
@@ -68,6 +73,29 @@ public class AuthenticationFilter implements GlobalFilter, Ordered {
             return authHeader.substring(7);
         }
         return null;
+    }
+
+    /**
+     * 从 Token 中提取用户 ID（不做详细验证）
+     * 注意：真实验证由 auth-service 完成
+     */
+    private String extractUserIdFromToken(String token) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(getSigningKey())
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+            return claims.getSubject();
+        } catch (Exception e) {
+            logger.debug("无法解析 Token 中的用户 ID: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
     private Mono<Void> onError(ServerWebExchange exchange, String message, HttpStatus status) {

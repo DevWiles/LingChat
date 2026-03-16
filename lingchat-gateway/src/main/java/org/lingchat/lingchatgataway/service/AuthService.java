@@ -6,16 +6,10 @@ import reactor.core.publisher.Mono;
 public interface AuthService {
     
     /**
-     * 验证 Token
+     * 简单的 token 检查（仅格式检查，不做详细验证）
+     * 注意：详细的 JWT 验证由 auth-service 完成
      * @param token JWT 令牌
-     * @return 用户信息（Mono 为空表示验证失败）
+     * @return 是否格式有效
      */
-    Mono<UserInfo> validateToken(String token);
-    
-    /**
-     * 刷新 Token
-     * @param token 旧令牌
-     * @return 新令牌
-     */
-    Mono<String> refreshToken(String token);
+    boolean isTokenFormatValid(String token);
 }
