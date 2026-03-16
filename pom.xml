@@ -9,6 +9,7 @@
     <modules>
         <module>lingchat-auth-service</module>
         <module>lingchat-common</module>
+        <module>lingchat-gateway</module>
     </modules>
 
     <properties>
