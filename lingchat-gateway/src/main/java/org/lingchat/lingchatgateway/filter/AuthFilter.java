@@ -14,19 +14,24 @@ public class AuthFilter implements GlobalFilter {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-
         ServerHttpRequest request = exchange.getRequest();
-
+        String path = request.getPath().value();
+        
+        // 放行认证相关接口（注册、登录等）
+        if (path.startsWith("/api/auth/")) {
+            return chain.filter(exchange);
+        }
+        
         String token = request.getHeaders().getFirst("Authorization");
-
+        
         if(token == null || !token.startsWith("Bearer ")){
-
             ServerHttpResponse response = exchange.getResponse();
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
-
             return response.setComplete();
         }
-
+        
+        // TODO: 这里后续可以添加 token 验证逻辑（如 JWT 校验、Redis 黑名单检查等）
+        
         return chain.filter(exchange);
     }
 }
