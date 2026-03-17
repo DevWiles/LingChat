@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*") // 允许跨域访问(开发环境，生产环境需要具体域名)
+//@CrossOrigin(origins = "*") // 允许跨域访问(开发环境，生产环境需要具体域名)
 public class AuthController {
 
     @Autowired

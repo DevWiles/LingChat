@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,21 +27,26 @@ class LingchatGatewayApplicationTests {
 
     /**
      * 测试认证服务路由 (/api/auth/**)
-     * 验证路由是否正确配置，并且 AuthFilter 正常工作
+     * 验证路由是否正确配置，并且 AuthFilter 放行认证接口
+     * 注意：由于 AuthFilter 会放行 /api/auth/** 路径，所以可以直接访问
+     * 如果有 Mock 后端或真实后端运行，可能会返回 200
      */
     @Test
     void testAuthServiceRouteWithoutToken() {
         System.out.println("🔍 开始测试认证服务路由（无 Token）...");
         
-        // 测试未带 Token 的请求 - 应该被 AuthFilter 拦截返回 401
+        // 测试未带 Token 的请求到认证接口 - AuthFilter 会放行，允许访问
+        // 如果有 Mock 后端，可能返回 200；如果没有后端，可能返回错误
+        // 这里我们只验证请求能够到达后端（不会被 AuthFilter 拦截返回 401）
         webTestClient.post()
                 .uri("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue("{\"username\":\"testuser001\",\"password\":\"123456\"}")
                 .exchange()
-                .expectStatus().isUnauthorized();
+                .expectStatus()
+                .value(status -> org.junit.jupiter.api.Assertions.assertNotEquals(HttpStatus.UNAUTHORIZED.value(), status));
         
-        System.out.println("✅ 认证服务路由测试通过 - 未授权请求被正确拦截 (401)");
+        System.out.println("✅ 认证服务路由测试通过 - AuthFilter 正确放行了认证接口");
     }
 
     /**
@@ -83,23 +89,23 @@ class LingchatGatewayApplicationTests {
     }
 
     /**
-     * 测试 GET 请求到认证端点（无需 Token）
-     * 根据 SecurityConfig，/api/auth/** 是 permitAll 的
-     * 但由于 AuthFilter 是 GlobalFilter，它仍然会检查 Token
+     * 测试 POST 请求到认证端点（无需 Token）
+     * 根据 AuthFilter 和 SecurityConfig，/api/auth/** 是 permitAll 的
+     * AuthFilter 会放行这些路径，允许直接访问
      */
     @Test
     void testGetAuthEndpoint() {
         System.out.println("🔍 开始测试 POST 认证端点...");
         
-        // GET 请求到认证端点，SecurityConfig 允许访问
-        // 但由于 AuthFilter 是全局过滤器，会检查 Token
+        // POST 请求到认证端点，AuthFilter 和 SecurityConfig 都允许访问
+        // 请求会被路由到后端服务（无论是否有后端运行）
         webTestClient.post()
                 .uri("/api/auth/register")
                 .exchange()
                 .expectStatus()
-                .isUnauthorized(); // AuthFilter 会拦截未授权请求
+                .value(status -> org.junit.jupiter.api.Assertions.assertNotEquals(HttpStatus.UNAUTHORIZED.value(), status));
         
-        System.out.println("✅ GET 认证端点测试通过 - AuthFilter 正常工作");
+        System.out.println("✅ POST 认证端点测试通过 - AuthFilter 正确放行");
     }
 
     /**
