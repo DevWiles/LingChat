@@ -1,10 +1,10 @@
-package org.lingchat.lingchatgataway;
+package org.lingchat.lingchatgateway;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class LingchatGatawayApplicationTests {
+class LingchatGatewayApplicationTests {
 
     @Test
     void contextLoads() {
