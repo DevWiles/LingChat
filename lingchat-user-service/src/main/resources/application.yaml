@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: user-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/lingchat?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+server:
+  port: 8081
+
+# Nacos 配置（暂时注释，后续配置）
+# spring:
+#   cloud:
+#     nacos:
+#       discovery:
+#         server-addr: localhost:8848
+
+logging:
+  level:
+    org.lingchat.userservice: debug
+    org.hibernate.SQL: debug
+
+spring.data.jpa.repositories.enabled: true
+spring.data.redis.repositories.enabled: false
