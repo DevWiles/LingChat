@@ -20,7 +20,5 @@ public class UserProfileResponse {
 
     private String signature;
 
-    private UserStatusEnum status;
-
     private LocalDateTime createTime;
 }

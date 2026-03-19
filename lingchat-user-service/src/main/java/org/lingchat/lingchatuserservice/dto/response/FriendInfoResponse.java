@@ -18,7 +18,5 @@ public class FriendInfoResponse {
 
     private String remark;
 
-    private UserStatusEnum status;
-
     private String signature;
 }

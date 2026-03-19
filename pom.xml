@@ -10,6 +10,7 @@
         <module>lingchat-auth-service</module>
         <module>lingchat-common</module>
         <module>lingchat-gateway</module>
+        <module>lingchat-user-service</module>
     </modules>
 
     <properties>

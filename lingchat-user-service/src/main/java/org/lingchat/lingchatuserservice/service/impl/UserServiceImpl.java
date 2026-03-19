@@ -62,7 +62,6 @@ public class UserServiceImpl implements UserService {
             default -> throw new IllegalArgumentException("无效的状态码");
         };
 
-        profile.setStatus(status);
         userProfileRepository.save(profile);
     }
 
@@ -72,7 +71,6 @@ public class UserServiceImpl implements UserService {
                 .nickname(profile.getNickName())
                 .avatar(profile.getAvatar())
                 .signature(profile.getSignature())
-                .status(profile.getStatus())
                 .createTime(profile.getCreateTime())
                 .build();
     }

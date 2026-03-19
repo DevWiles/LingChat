@@ -17,38 +17,14 @@ public class User {
 
     @Id // 主键
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 表示使用数据库自增策略
-    private Long id;
+    private Long user_id;
 
     @Column(unique = true, nullable = false) // 唯一且不能为空
     private String username;
 
     @Column(nullable = false) // 不能为空
-    private  String password;
+    private String password;
 
-    @Column(length = 50)
-    private String nickname;
-
-    @Column(length = 100)
-    private String avatar;
-
-    @Column(nullable = false, updatable = false) // 创建时间不能为空且不可更新
-    private LocalDateTime createTime;
-
-    @Column(nullable = false) // 更新时间
-    private LocalDateTime updateTime;
-
-    @PrePersist
-    public void prePersist() {
-        // 创建时间
-        this.createTime = LocalDateTime.now();
-        // 更新时间
-        this.updateTime = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    public void preUpdate() {
-        // 更新时间
-        this.updateTime = LocalDateTime.now();
-    }
-
+    @Column(nullable = false, columnDefinition = "TINYINT DEFAULT 1 COMMENT '用户状态：0-禁用，1-正常'")
+    private Integer status = 1;
 }

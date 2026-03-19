@@ -24,6 +24,9 @@ public class UserResponse {
     // 头像
     private String avatar;
 
+    // 用户状态：0-禁用，1-正常
+    private Integer status;
+
     // 创建时间
     private LocalDateTime createTime;
 }

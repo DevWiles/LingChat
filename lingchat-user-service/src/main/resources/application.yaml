@@ -23,7 +23,7 @@ spring:
       port: 6379
 
 server:
-  port: 8081
+  port: 8082
 
 # Nacos 配置（暂时注释，后续配置）
 # spring:

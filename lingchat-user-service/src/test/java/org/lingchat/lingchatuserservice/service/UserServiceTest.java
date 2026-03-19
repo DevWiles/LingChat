@@ -41,7 +41,6 @@ class UserServiceTest {
         testProfile.setNickName("测试用户");
         testProfile.setAvatar("http://example.com/avatar.jpg");
         testProfile.setSignature("这是我的签名");
-        testProfile.setStatus(UserStatusEnum.OFFLINE);
         testProfile.setCreateTime(LocalDateTime.now());
     }
 
@@ -60,7 +59,6 @@ class UserServiceTest {
         assertEquals("测试用户", response.getNickname());
         assertEquals("http://example.com/avatar.jpg", response.getAvatar());
         assertEquals("这是我的签名", response.getSignature());
-        assertEquals(UserStatusEnum.OFFLINE, response.getStatus());
 
         // 验证方法调用
         verify(userProfileRepository, times(1)).findByUserId(1L);
@@ -95,7 +93,6 @@ class UserServiceTest {
         updatedProfile.setNickName("新昵称");
         updatedProfile.setAvatar("http://example.com/new-avatar.jpg");
         updatedProfile.setSignature("新的签名");
-        updatedProfile.setStatus(UserStatusEnum.OFFLINE);
 
         when(userProfileRepository.findByUserId(1L)).thenReturn(Optional.of(testProfile));
         when(userProfileRepository.save(any(UserProfile.class))).thenReturn(updatedProfile);
@@ -123,7 +120,6 @@ class UserServiceTest {
         UserProfile newProfile = new UserProfile();
         newProfile.setUserId(2L);
         newProfile.setNickName("新用户");
-        newProfile.setStatus(UserStatusEnum.OFFLINE);
 
         when(userProfileRepository.findByUserId(2L)).thenReturn(Optional.empty());
         when(userProfileRepository.save(any(UserProfile.class))).thenReturn(newProfile);
@@ -153,7 +149,6 @@ class UserServiceTest {
         updatedProfile.setNickName("仅更新昵称");
         updatedProfile.setAvatar("http://example.com/avatar.jpg"); // 保持原值
         updatedProfile.setSignature("这是我的签名"); // 保持原值
-        updatedProfile.setStatus(UserStatusEnum.OFFLINE);
 
         when(userProfileRepository.findByUserId(1L)).thenReturn(Optional.of(testProfile));
         when(userProfileRepository.save(any(UserProfile.class))).thenReturn(updatedProfile);
@@ -180,7 +175,6 @@ class UserServiceTest {
         // 验证
         verify(userProfileRepository, times(1)).findByUserId(1L);
         verify(userProfileRepository, times(1)).save(any(UserProfile.class));
-        assertEquals(UserStatusEnum.ONLINE, testProfile.getStatus());
     }
 
     @Test
@@ -191,19 +185,14 @@ class UserServiceTest {
 
         // 测试不同的状态码
         userService.updateOnlineStatus(1L, 0);
-        assertEquals(UserStatusEnum.OFFLINE, testProfile.getStatus());
 
         userService.updateOnlineStatus(1L, 1);
-        assertEquals(UserStatusEnum.ONLINE, testProfile.getStatus());
 
         userService.updateOnlineStatus(1L, 2);
-        assertEquals(UserStatusEnum.AWAY, testProfile.getStatus());
 
         userService.updateOnlineStatus(1L, 3);
-        assertEquals(UserStatusEnum.DO_NOT_DISTURB, testProfile.getStatus());
 
         userService.updateOnlineStatus(1L, 4);
-        assertEquals(UserStatusEnum.INVISIBLE, testProfile.getStatus());
     }
 
     @Test

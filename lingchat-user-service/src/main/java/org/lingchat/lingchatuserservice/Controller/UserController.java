@@ -29,11 +29,4 @@ public class UserController {
         return ResponseEntity.ok(Result.success(profile));
     }
 
-    @PutMapping("/status")
-    public ResponseEntity<Result<Void>> updateOnlineStatus(
-            @RequestHeader("X-User-Id") Long userId,
-            @RequestParam Integer statusCode) {
-        userService.updateOnlineStatus(userId, statusCode);
-        return ResponseEntity.ok(Result.success());
-    }
 }

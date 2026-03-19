@@ -58,7 +58,6 @@ class FriendServiceTest {
         user1.setNickName("用户 1");
         user1.setAvatar("http://example.com/avatar1.jpg");
         user1.setSignature("用户 1 的签名");
-        user1.setStatus(UserStatusEnum.ONLINE);
 
         // 准备用户 2
         user2 = new UserProfile();
@@ -66,7 +65,6 @@ class FriendServiceTest {
         user2.setNickName("用户 2");
         user2.setAvatar("http://example.com/avatar2.jpg");
         user2.setSignature("用户 2 的签名");
-        user2.setStatus(UserStatusEnum.OFFLINE);
 
         // 准备好友请求
         friendRequest = new FriendRequest();
@@ -264,7 +262,6 @@ class FriendServiceTest {
         assertEquals(2L, response.getUserId());
         assertEquals("用户 2", response.getNickname());
         assertEquals("好朋友", response.getRemark());
-        assertEquals(UserStatusEnum.OFFLINE, response.getStatus());
 
         verify(friendshipRepository, times(1)).findByUserIdAndIsBlacklistedFalse(1L);
         verify(userProfileRepository, times(1)).findByUserId(2L);
@@ -429,7 +426,6 @@ class FriendServiceTest {
         assertEquals(1L, response.getSenderId());
         assertEquals("用户 1", response.getSenderNickname());
         assertEquals("你好，我想加你为好友", response.getMessage());
-        assertEquals(0, response.getStatus());
 
         verify(friendRequestRepository, times(1)).findByReceiverIdAndStatus(2L, 0);
     }

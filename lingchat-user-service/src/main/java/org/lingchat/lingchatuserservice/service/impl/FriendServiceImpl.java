@@ -173,7 +173,6 @@ public class FriendServiceImpl implements FriendService {
                 .nickname(profile.getNickName())
                 .avatar(profile.getAvatar())
                 .remark(remark)
-                .status(profile.getStatus())
                 .signature(profile.getSignature())
                 .build();
     }
@@ -186,7 +185,6 @@ public class FriendServiceImpl implements FriendService {
                 .senderId(request.getSenderId())
                 .senderNickname(senderProfile != null ? senderProfile.getNickName() : "未知用户")
                 .message(request.getMessage())
-                .status(request.getStatus())
                 .createTime(request.getCreateTime())
                 .build();
     }

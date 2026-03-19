@@ -22,12 +22,10 @@
     │   └── UserServiceImpl.java        # 用户服务实现
     │
     ├── repository/                      # 数据访问层
-    │   ├── UserRepository.java         # 用户数据访问接口
-    │   └── UserSessionRepository.java  # 用户会话数据访问接口
+    │   └── UserRepository.java         # 用户数据访问接口
     │
     ├── entity/                          # 实体类
-    │   ├── User.java                   # 用户实体
-    │   └── UserSession.java            # 用户会话实体
+    │   └── User.java                   # 用户实体
     │
     ├── dto/                             # 数据传输对象
     │   ├── request/                     # 请求 DTO
@@ -59,11 +57,9 @@
 ---
 3. repository 层 - 数据访问
    - UserRepository: 操作用户表数据
-   - UserSessionRepository: 操作用户会话表数据
 ---
 4. entity 层 - 数据库实体映射
    - User: 对应 user 表
-   - UserSession: 对应 user_session 表
 ---
 5. dto 层 - 数据传输对象
    - 分离请求和响应的数据结构，保证接口规范性

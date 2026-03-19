@@ -1,29 +1,29 @@
-package org.lingchat.lingchatuserservice.entity;
+package org.lingchat.authservice.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.lingchat.lingchatcommon.enums.UserStatusEnum;
 
 import java.time.LocalDateTime;
 
+/**
+ * 用户详细信息表映射
+ */
 @Data
 @Entity
 @Table(name = "user_profile")
 public class UserProfile {
 
     @Id
+    @Column(unique = true, nullable = false)
     private Long userId;
 
     @Column(length = 50)
-    private String nickName;
+    private String nickname;
 
-    @Column(length = 200)
+    @Column(length = 100)
     private String avatar;
-
-    @Column(length = 500)
-    private String signature;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -32,5 +32,4 @@ public class UserProfile {
     @UpdateTimestamp
     @Column(nullable = false)
     private LocalDateTime updateTime;
-
 }

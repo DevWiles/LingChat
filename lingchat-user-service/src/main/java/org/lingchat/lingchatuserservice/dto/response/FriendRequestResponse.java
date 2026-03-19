@@ -17,7 +17,5 @@ public class FriendRequestResponse {
 
     private String message;
 
-    private Integer status;
-
     private LocalDateTime createTime;
 }
