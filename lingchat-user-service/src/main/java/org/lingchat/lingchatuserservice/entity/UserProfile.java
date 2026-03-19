@@ -17,7 +17,7 @@ public class UserProfile {
     private Long userId;
 
     @Column(length = 50)
-    private String nickName;
+    private String nickname;
 
     @Column(length = 200)
     private String avatar;

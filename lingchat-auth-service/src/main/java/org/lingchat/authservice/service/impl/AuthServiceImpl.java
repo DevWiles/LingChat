@@ -7,6 +7,7 @@ import org.lingchat.authservice.entity.User;
 import org.lingchat.authservice.entity.UserProfile;
 import org.lingchat.authservice.repository.UserRepository;
 import org.lingchat.authservice.repository.UserProfileRepository;
+import org.lingchat.authservice.security.JwtTokenProvider;
 import org.lingchat.authservice.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Override
     @Transactional
@@ -69,8 +73,15 @@ public class AuthServiceImpl implements AuthService {
         UserProfile userProfile = userProfileRepository.findByUserId(user.getUser_id())
                 .orElse(null);
 
+        // 4. 生成 JWT Token
+        String token = jwtTokenProvider.generateToken(user.getUser_id(), user.getUsername());
+
+        // 5. 返回用户信息和 token
+        UserResponse response = convertToResponse(user, userProfile);
+        response.setToken(token);
+
         // 4. 返回用户信息
-        return convertToResponse(user, userProfile);
+        return response;
     }
 
     @Override

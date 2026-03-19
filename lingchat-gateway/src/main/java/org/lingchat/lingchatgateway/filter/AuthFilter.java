@@ -17,12 +17,18 @@ public class AuthFilter implements GlobalFilter {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getPath().value();
 
+        System.out.println("====== AuthFilter 接收到请求 ======");
+        System.out.println("请求路径：" + path);
+        System.out.println("请求方法：" + request.getMethod());
+        System.out.println("完整 URL：" + request.getURI());
+
         // 放行认证相关接口（注册、登录等）- 支持两种路径格式
         if (path.startsWith("/auth/") || path.startsWith("/api/auth/")) {
             return chain.filter(exchange);
         }
 
         String token = request.getHeaders().getFirst("Authorization");
+        System.out.println("token: " + token);
 
         if(token == null || !token.startsWith("Bearer ")){
             ServerHttpResponse response = exchange.getResponse();

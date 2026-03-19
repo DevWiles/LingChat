@@ -170,7 +170,7 @@ public class FriendServiceImpl implements FriendService {
     private FriendInfoResponse convertToFriendInfoResponse(UserProfile profile, String remark) {
         return FriendInfoResponse.builder()
                 .userId(profile.getUserId())
-                .nickname(profile.getNickName())
+                .nickname(profile.getNickname())
                 .avatar(profile.getAvatar())
                 .remark(remark)
                 .signature(profile.getSignature())
@@ -183,7 +183,7 @@ public class FriendServiceImpl implements FriendService {
         return FriendRequestResponse.builder()
                 .id(request.getId())
                 .senderId(request.getSenderId())
-                .senderNickname(senderProfile != null ? senderProfile.getNickName() : "未知用户")
+                .senderNickname(senderProfile != null ? senderProfile.getNickname() : "未知用户")
                 .message(request.getMessage())
                 .createTime(request.getCreateTime())
                 .build();

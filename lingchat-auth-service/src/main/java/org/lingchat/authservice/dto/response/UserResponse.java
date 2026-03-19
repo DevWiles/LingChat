@@ -29,4 +29,7 @@ public class UserResponse {
 
     // 创建时间
     private LocalDateTime createTime;
+
+    // JWT
+    private String token;
 }

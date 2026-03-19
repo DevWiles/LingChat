@@ -16,12 +16,12 @@ public class GatewaySecurityConfig {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http
                 .csrf(csrf -> csrf.disable())
-                // 不在 Security 中配置 CORS，使用单独的 CorsWebFilter
                 .authorizeExchange(exchanges -> exchanges
-                        // 放行所有认证相关的接口（注册、登录等）
-                        .pathMatchers("/auth/**").permitAll()
-                        .pathMatchers("/api/auth/**").permitAll()
-                        // 其他所有请求都需要认证
+                        // 放行 所有 OPTIONS 预检请求
+                        .pathMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                        // 放行业务接口
+                        .pathMatchers("/api/**").permitAll()
+                        // 其他需要登录
                         .anyExchange().authenticated()
                 )
                 .exceptionHandling(exceptions -> exceptions

@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
                 });
 
         if (request.getNickname() != null) {
-            profile.setNickName(request.getNickname());
+            profile.setNickname(request.getNickname());
         }
         if (request.getAvatar() != null) {
             profile.setAvatar(request.getAvatar());
@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
     private UserProfileResponse convertToResponse(UserProfile profile) {
         return UserProfileResponse.builder()
                 .userId(profile.getUserId())
-                .nickname(profile.getNickName())
+                .nickname(profile.getNickname())
                 .avatar(profile.getAvatar())
                 .signature(profile.getSignature())
                 .createTime(profile.getCreateTime())
