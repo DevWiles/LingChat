@@ -1,6 +1,10 @@
 server:
   port: 8080
 
+jwt:
+  # 与 lingchat-auth-service 保持一致（auth-service 直接将该字符串的字节用作 HMAC key）
+  secret: bGluZ2NoYXQtc2VjcmV0LWtleS1mb3Itand0LXRva2VuLWdlbmVyYXRpb24tdmVyeS1sb25nLXN0cmluZw==
+
 spring:
   application:
     name: lingchat-gateway
@@ -38,16 +42,22 @@ spring:
                 redis-rate-limiter.replenishRate: 10
                 redis-rate-limiter.burstCapacity: 20
 
+        # 用户服务路由（好友、用户信息）
+        - id: user-service-friend
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/friend/**
+
+        - id: user-service-user
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/user/**
+
         # 未来其他服务的路由示例
         # - id: chat-service
         #   uri: lb://lingchat-chat-service
         #   predicates:
         #     - Path=/api/chat/**
-
-        # - id: user-service
-        #   uri: lb://lingchat-user-service
-        #   predicates:
-        #     - Path=/api/user/**
 
       # 全局 CORS 配置
       globalcors:
