@@ -16,6 +16,9 @@ public class UserProfile {
     @Id
     private Long userId;
 
+    @Column(unique = true, length = 50)
+    private String username;
+
     @Column(length = 50)
     private String nickname;
 
