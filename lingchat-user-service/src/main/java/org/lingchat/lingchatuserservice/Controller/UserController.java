@@ -29,4 +29,10 @@ public class UserController {
         return ResponseEntity.ok(Result.success(profile));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<Result<UserProfileResponse>> searchUser(@RequestParam String username) {
+        UserProfileResponse profile = userService.searchByUsername(username);
+        return ResponseEntity.ok(Result.success(profile));
+    }
+
 }

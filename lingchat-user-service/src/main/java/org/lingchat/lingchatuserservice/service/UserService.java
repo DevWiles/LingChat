@@ -11,4 +11,6 @@ public interface UserService {
     UserProfileResponse updateUserProfile(Long userId, UserProfileUpdateRequest request);
 
     void updateOnlineStatus(Long userId, Integer statusCode);
+
+    UserProfileResponse searchByUsername(String username);
 }

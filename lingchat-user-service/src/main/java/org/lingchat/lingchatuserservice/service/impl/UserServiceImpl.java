@@ -65,9 +65,17 @@ public class UserServiceImpl implements UserService {
         userProfileRepository.save(profile);
     }
 
+    @Override
+    public UserProfileResponse searchByUsername(String username) {
+        UserProfile profile = userProfileRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("用户不存在"));
+        return convertToResponse(profile);
+    }
+
     private UserProfileResponse convertToResponse(UserProfile profile) {
         return UserProfileResponse.builder()
                 .userId(profile.getUserId())
+                .username(profile.getUsername())
                 .nickname(profile.getNickname())
                 .avatar(profile.getAvatar())
                 .signature(profile.getSignature())
