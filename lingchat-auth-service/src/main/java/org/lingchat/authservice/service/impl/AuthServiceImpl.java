@@ -48,6 +48,7 @@ public class AuthServiceImpl implements AuthService {
         // 4. 创建用户 profile 信息
         UserProfile userProfile = new UserProfile();
         userProfile.setUserId(savedUser.getUser_id());
+        userProfile.setUsername(savedUser.getUsername());
         userProfile.setNickname(request.getNickname());
         userProfile.setAvatar(request.getAvatar());
 
