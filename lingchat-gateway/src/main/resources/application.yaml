@@ -9,6 +9,12 @@ spring:
   application:
     name: lingchat-gateway
 
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
   # Redis 配置
   data:
     redis:

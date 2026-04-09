@@ -2,6 +2,12 @@ spring:
   application:
     name: lingchat-auth-service
 
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
   datasource:
     url: jdbc:mysql://localhost:3306/lingchat?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
     username: root
@@ -23,3 +29,8 @@ server:
 jwt:
   secret: bGluZ2NoYXQtc2VjcmV0LWtleS1mb3Itand0LXRva2VuLWdlbmVyYXRpb24tdmVyeS1sb25nLXN0cmluZw==
   expiration: 86400000  # 24 小时（毫秒）
+
+# 内部服务地址（未来接入 Nacos 后可替换为服务名）
+services:
+  user-service:
+    url: http://localhost:8082

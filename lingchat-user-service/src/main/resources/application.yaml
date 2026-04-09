@@ -2,6 +2,12 @@ spring:
   application:
     name: user-service
 
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
   datasource:
     url: jdbc:mysql://localhost:3306/lingchat?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
