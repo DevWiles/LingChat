@@ -13,6 +13,8 @@ public class FriendRequestResponse {
 
     private Long senderId;
 
+    private String senderUsername;
+
     private String senderNickname;
 
     private String message;

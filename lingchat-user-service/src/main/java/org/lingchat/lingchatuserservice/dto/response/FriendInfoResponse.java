@@ -16,7 +16,5 @@ public class FriendInfoResponse {
 
     private String avatar;
 
-    private String remark;
-
     private String signature;
 }

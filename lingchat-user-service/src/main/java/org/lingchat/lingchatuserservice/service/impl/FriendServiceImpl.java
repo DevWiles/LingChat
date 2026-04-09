@@ -42,13 +42,12 @@ public class FriendServiceImpl implements FriendService {
             throw new RuntimeException("对方已经是你的好友");
         }
 
-        FriendRequest existingRequest = friendRequestRepository.findAll()
-                .stream()
-                .filter(r -> r.getSenderId().equals(userId) && r.getReceiverId().equals(request.getFriendId()) && r.getStatus() == 0)
-                .findFirst()
-                .orElse(null);
+        // 检查是否已有待处理的好友申请（精确查询，避免全表扫描）
+        boolean alreadyRequested = friendRequestRepository
+                .findBySenderIdAndReceiverIdAndStatus(userId, request.getFriendId(), 0)
+                .isPresent();
 
-        if (existingRequest != null) {
+        if (alreadyRequested) {
             throw new RuntimeException("已发送过好友申请，请勿重复发送");
         }
 
@@ -170,9 +169,9 @@ public class FriendServiceImpl implements FriendService {
     private FriendInfoResponse convertToFriendInfoResponse(UserProfile profile, String remark) {
         return FriendInfoResponse.builder()
                 .userId(profile.getUserId())
+                .username(profile.getUsername())
                 .nickname(profile.getNickname())
                 .avatar(profile.getAvatar())
-                .remark(remark)
                 .signature(profile.getSignature())
                 .build();
     }
@@ -180,10 +179,23 @@ public class FriendServiceImpl implements FriendService {
     private FriendRequestResponse convertToFriendRequestResponse(FriendRequest request) {
         UserProfile senderProfile = userProfileRepository.findByUserId(request.getSenderId()).orElse(null);
 
+        String senderNickname = "未知用户";
+        String senderUsername = null;
+
+        if (senderProfile != null) {
+            // 优先显示昵称，如果没有昵称则显示用户名
+            senderNickname = senderProfile.getNickname();
+            if (senderNickname == null || senderNickname.isBlank()) {
+                senderNickname = senderProfile.getUsername();
+            }
+            senderUsername = senderProfile.getUsername();
+        }
+
         return FriendRequestResponse.builder()
                 .id(request.getId())
                 .senderId(request.getSenderId())
-                .senderNickname(senderProfile != null ? senderProfile.getNickname() : "未知用户")
+                .senderUsername(senderUsername)
+                .senderNickname(senderNickname)
                 .message(request.getMessage())
                 .createTime(request.getCreateTime())
                 .build();
