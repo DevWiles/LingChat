@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
@@ -38,16 +40,32 @@ public class AuthFilter implements GlobalFilter {
             return chain.filter(exchange);
         }
 
-        String authHeader = request.getHeaders().getFirst("Authorization");
+        // 检查是否是 WebSocket 握手请求
+        String upgrade = request.getHeaders().getFirst(HttpHeaders.UPGRADE);
+        boolean isWebSocket = "websocket".equalsIgnoreCase(upgrade);
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            log.warn("请求缺少有效的 Authorization header: {}", path);
-            ServerHttpResponse response = exchange.getResponse();
-            response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            return response.setComplete();
+        String token;
+        if (isWebSocket) {
+            // WebSocket 连接：从 URL 参数获取 token
+            token = getTokenFromQuery(request.getURI().getQuery());
+            if (token == null) {
+                log.warn("WebSocket 连接缺少 token: {}", path);
+                ServerHttpResponse response = exchange.getResponse();
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                return response.setComplete();
+            }
+        } else {
+            // 普通 HTTP 请求：从 Authorization Header 获取 token
+            String authHeader = request.getHeaders().getFirst("Authorization");
+
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                log.warn("请求缺少有效的 Authorization header: {}", path);
+                ServerHttpResponse response = exchange.getResponse();
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                return response.setComplete();
+            }
+            token = authHeader.substring(7);
         }
-
-        String token = authHeader.substring(7);
 
         try {
             // 解析 JWT，获取 userId
@@ -83,5 +101,25 @@ public class AuthFilter implements GlobalFilter {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();
         }
+    }
+
+    /**
+     * 从 URL 查询参数中提取 token
+     */
+    private String getTokenFromQuery(String query) {
+        if (query == null || query.isEmpty()) {
+            return null;
+        }
+        for (String param : query.split("&")) {
+            String[] pair = param.split("=", 2);
+            if (pair.length == 2 && "token".equals(pair[0])) {
+                try {
+                    return URLDecoder.decode(pair[1], StandardCharsets.UTF_8);
+                } catch (Exception e) {
+                    return pair[1];
+                }
+            }
+        }
+        return null;
     }
 }

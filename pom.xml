@@ -11,6 +11,7 @@
         <module>lingchat-common</module>
         <module>lingchat-gateway</module>
         <module>lingchat-user-service</module>
+        <module>lingchat-message-service</module>
     </modules>
 
     <properties>

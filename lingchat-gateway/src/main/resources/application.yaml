@@ -33,6 +33,12 @@ spring:
           lower-case-service-id: true
 
       routes:
+        # WebSocket 路由（优先匹配）
+        - id: message-service-ws
+          uri: ws://localhost:8083
+          predicates:
+            - Path=/ws
+
         # 认证服务路由
         - id: auth-service
           uri: http://localhost:8081
@@ -49,6 +55,12 @@ spring:
           uri: http://localhost:8082
           predicates:
             - Path=/api/user/**
+
+        # 消息服务 REST API 路由
+        - id: message-service-api
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/message/**
 
         # 未来其他服务的路由示例
         # - id: chat-service

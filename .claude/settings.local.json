@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(find . -path \"*/src/main/java\" -type d -exec find {} -name \"*.java\" \\\\;)"
+      "Bash(find . -path \"*/src/main/java\" -type d -exec find {} -name \"*.java\" \\\\;)",
+      "Bash(mvn clean:*)"
     ]
   }
 }
