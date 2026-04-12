@@ -20,6 +20,13 @@
     </properties>
 
     <dependencies>
+        <!-- LingChat 公共模块 -->
+        <dependency>
+            <groupId>org.lingchat</groupId>
+            <artifactId>lingchat-common</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
         <!-- Spring Boot 基础依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

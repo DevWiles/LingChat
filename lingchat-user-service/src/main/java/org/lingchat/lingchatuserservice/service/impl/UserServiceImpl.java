@@ -1,6 +1,8 @@
 package org.lingchat.lingchatuserservice.service.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.lingchat.lingchatcommon.enums.UserStatusEnum;
+import org.lingchat.lingchatuserservice.dto.request.CreateProfileRequest;
 import org.lingchat.lingchatuserservice.dto.request.UserProfileUpdateRequest;
 import org.lingchat.lingchatuserservice.dto.response.UserProfileResponse;
 import org.lingchat.lingchatuserservice.entity.UserProfile;
@@ -10,11 +12,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserProfileRepository userProfileRepository;
+
+    @Override
+    @Transactional
+    public void createProfile(CreateProfileRequest request) {
+        if (userProfileRepository.existsById(request.getUserId())) {
+            log.warn("用户档案已存在，跳过创建: userId={}", request.getUserId());
+            return;
+        }
+        UserProfile profile = new UserProfile();
+        profile.setUserId(request.getUserId());
+        profile.setUsername(request.getUsername());
+        profile.setNickname(request.getNickname());
+        profile.setAvatar(request.getAvatar());
+        userProfileRepository.save(profile);
+        log.info("用户档案创建成功: userId={}", request.getUserId());
+    }
 
     @Override
     public UserProfileResponse getUserProfile(Long userId) {
@@ -59,10 +78,12 @@ public class UserServiceImpl implements UserService {
             case 2 -> UserStatusEnum.AWAY;
             case 3 -> UserStatusEnum.DO_NOT_DISTURB;
             case 4 -> UserStatusEnum.INVISIBLE;
-            default -> throw new IllegalArgumentException("无效的状态码");
+            default -> throw new IllegalArgumentException("无效的状态码: " + statusCode);
         };
 
+        profile.setStatus(status.getStatus());
         userProfileRepository.save(profile);
+        log.info("用户在线状态已更新: userId={}, status={}", userId, status);
     }
 
     @Override
@@ -83,3 +104,4 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 }
+

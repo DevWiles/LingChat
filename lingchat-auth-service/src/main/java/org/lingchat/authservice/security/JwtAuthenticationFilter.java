@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,6 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -31,20 +33,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            System.out.println("请求URL：" + request.getRequestURL());
-            // 从请求头中获取 token
             String token = getTokenFromRequest(request);
-            System.out.println("token: " + token);
 
-            // 如果 token 存在且有效
             if (StringUtils.hasText(token) && jwtTokenProvider.validateToken(token)) {
-                // 从 token 中获取用户名
                 String username = jwtTokenProvider.getUsernameFromToken(token);
+                log.debug("JWT 验证通过，username={}", username);
 
-                // 加载用户详情
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                // 创建认证对象并设置到 Spring Security 上下文
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
@@ -59,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            logger.error("无法设置用户认证信息", e);
+            log.error("无法设置用户认证信息: {}", e.getMessage());
         }
 
         filterChain.doFilter(request, response);
@@ -71,13 +67,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      */
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
-
-        System.out.println("Authorization: " + request.getHeader("Authorization"));
-
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         }
-
         return null;
     }
 }

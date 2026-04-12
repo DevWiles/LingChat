@@ -3,6 +3,7 @@ package org.lingchat.lingchatgateway.filter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
+@Slf4j
 @Component
 public class AuthFilter implements GlobalFilter {
 
@@ -29,10 +31,7 @@ public class AuthFilter implements GlobalFilter {
         ServerHttpRequest request = exchange.getRequest();
         String path = request.getPath().value();
 
-        System.out.println("====== AuthFilter 接收到请求 ======");
-        System.out.println("请求路径：" + path);
-        System.out.println("请求方法：" + request.getMethod());
-        System.out.println("完整 URL：" + request.getURI());
+        log.debug("AuthFilter 接收到请求: {} {}", request.getMethod(), path);
 
         // 放行认证相关接口（注册、登录等）- 支持两种路径格式
         if (path.startsWith("/auth/") || path.startsWith("/api/auth/")) {
@@ -40,9 +39,9 @@ public class AuthFilter implements GlobalFilter {
         }
 
         String authHeader = request.getHeaders().getFirst("Authorization");
-        System.out.println("Authorization header: " + authHeader);
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            log.warn("请求缺少有效的 Authorization header: {}", path);
             ServerHttpResponse response = exchange.getResponse();
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();
@@ -63,12 +62,13 @@ public class AuthFilter implements GlobalFilter {
             String userId = userIdObj != null ? userIdObj.toString() : null;
 
             if (userId == null) {
+                log.warn("JWT 中缺少 userId claim");
                 ServerHttpResponse response = exchange.getResponse();
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return response.setComplete();
             }
 
-            System.out.println("JWT 解析成功，userId: " + userId);
+            log.debug("JWT 验证通过，userId={}, path={}", userId, path);
 
             // 将 userId 注入到下游请求 header 中
             ServerHttpRequest mutatedRequest = request.mutate()
@@ -78,7 +78,7 @@ public class AuthFilter implements GlobalFilter {
             return chain.filter(exchange.mutate().request(mutatedRequest).build());
 
         } catch (Exception e) {
-            System.out.println("JWT 解析失败: " + e.getMessage());
+            log.warn("JWT 解析失败: {}", e.getMessage());
             ServerHttpResponse response = exchange.getResponse();
             response.setStatusCode(HttpStatus.UNAUTHORIZED);
             return response.setComplete();

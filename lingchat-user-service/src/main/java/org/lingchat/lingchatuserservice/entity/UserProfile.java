@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import org.lingchat.lingchatcommon.enums.UserStatusEnum;
 
 import java.time.LocalDateTime;
 
@@ -28,6 +27,10 @@ public class UserProfile {
     @Column(length = 500)
     private String signature;
 
+    /** 在线状态：0=离线 1=在线 2=离开 3=勿扰 4=隐身，对应 UserStatusEnum */
+    @Column(columnDefinition = "INT DEFAULT 0")
+    private Integer status = 0;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createTime;
@@ -37,3 +40,4 @@ public class UserProfile {
     private LocalDateTime updateTime;
 
 }
+

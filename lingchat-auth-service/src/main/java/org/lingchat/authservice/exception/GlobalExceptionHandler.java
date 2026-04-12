@@ -1,29 +1,32 @@
 package org.lingchat.authservice.exception;
 
-import org.lingchat.authservice.dto.response.ApiResponse;
-import org.springframework.http.ResponseEntity;
+import lombok.extern.slf4j.Slf4j;
+import org.lingchat.lingchatcommon.model.Result;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
  * 全局异常处理
  */
+@Slf4j
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * 处理运行时异常
+     * 处理业务运行时异常（如用户名已存在、密码错误等）
      */
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ApiResponse<Void>> handleRuntimeException(RuntimeException e) {
-        return ResponseEntity.badRequest()
-                .body(ApiResponse.fail(400, e.getMessage()));
+    public Result<Void> handleRuntimeException(RuntimeException e) {
+        log.warn("业务异常: {}", e.getMessage());
+        return Result.fail(e.getMessage());
     }
 
     /**
-     * 处理其他异常
+     * 处理其他未知异常
      */
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiResponse<Void>> handleException(Exception e) {
-        return ResponseEntity.internalServerError()
-                .body(ApiResponse.fail(500,"服务器内部错误：" + e.getMessage()));
+    public Result<Void> handleException(Exception e) {
+        log.error("系统异常: ", e);
+        return Result.fail("服务器内部错误：" + e.getMessage());
     }
 }
