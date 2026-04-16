@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(find . -path \"*/src/main/java\" -type d -exec find {} -name \"*.java\" \\\\;)",
-      "Bash(mvn clean:*)"
+      "Bash(mvn clean:*)",
+      "Bash(npm run *)",
+      "Bash(npx eslint *)",
+      "Bash(npx tsc *)"
     ]
   }
 }
